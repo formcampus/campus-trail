@@ -1,28 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Campus Connect – Classroom</title>
   <link rel="icon" href="CAMPUS CONNECT.png" />
   <style>
-    * { box-sizing: border-box; margin:0; padding:0; font-family: "Segoe UI", Roboto, Arial, sans-serif; }
-    body { min-height:100vh; background:#f2f4f8; padding:20px; }
-    header { background:#18ab91; color:#fff; text-align:center; padding:20px; border-radius:12px; margin-bottom:20px; }
-    header h1 { font-size:22px; margin-bottom:4px; }
-    .card { background:#fff; padding:12px; border-radius:10px; border:1px solid #eee; margin-bottom:14px; }
-    input, textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; margin-top:6px; }
-    .btn { padding:10px 14px; border-radius:8px; border:none; background:#18ab91; color:#fff; font-weight:600; cursor:pointer; }
-    .secondary { background:#fff; color:#18ab91; border:1px solid #18ab91; }
-    .list-item { border:1px solid #eee; padding:10px; border-radius:8px; background:#fafafa; margin-bottom:8px; }
-    .muted { font-size:12px; color:#666; margin-top:6px; }
-    .reply-box { margin-top:8px; background:#fff;padding:8px;border-radius:6px;border:1px solid #eee; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f2f4f8;
+      padding: 20px;
+    }
+
+    header {
+      background: #18ab91;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      margin-bottom: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #18ab91;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .secondary {
+      background: #fff;
+      color: #18ab91;
+      border: 1px solid #18ab91;
+    }
+
+    .list-item {
+      border: 1px solid #eee;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fafafa;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .top-right {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      background: #fff;
+      color: #18ab91;
+      border: 1px solid #fff;
+      font-size: 18px;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: #f8f8f8;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Classroom</h1>
     <p id="userInfo" class="muted"></p>
+
+    <!-- 🧠 and 📊 buttons (top-right) -->
+    <div class="top-right">
+      <button class="btn-icon" title="Go to Tests" onclick="window.location='student.html'">🧠</button>
+      <button class="btn-icon" title="View Results" onclick="window.location='result.html'">📊</button>
+    </div>
   </header>
 
   <main style="max-width:900px;margin:0 auto;">
@@ -34,97 +131,15 @@
       </form>
       <div id="myClasses" style="margin-top:12px;"></div>
     </div>
-
-    <div id="classArea" style="display:none;">
-      <div id="myQuestionsContainer" style="margin-bottom:12px; display:none;"></div>
-
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;">
-        <h2 id="classTitle"></h2>
-        <div>
-          <button id="leaveClassBtn" class="btn secondary">Leave Class</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>📢 Class Notices</h3>
-        <div id="classNotices"></div>
-      </div>
-
-      <div class="card">
-        <h3>📝 Assignments</h3>
-        <div id="assignList"></div>
-      </div>
-
-      <div class="card">
-        <h3>📤 Submit Assignment / Ask Question</h3>
-        <form id="submitForm" style="display:flex;flex-direction:column;gap:8px;max-width:700px;">
-          <label>Type</label>
-          <select id="submitType">
-            <option value="submission">Submit Assignment</option>
-            <option value="question">Ask Question</option>
-          </select>
-          <input id="submitFor" placeholder="Assignment ID (optional)">
-          <input id="submitTitle" placeholder="Title (assignment name or question)" required>
-          <textarea id="submitMsg" rows="3" placeholder="Write message (answer or question)"></textarea>
-          <input type="file" id="submitFile" accept="image/*,.pdf">
-          <button class="btn" type="submit">Send</button>
-        </form>
-        <div id="submissions" style="margin-top:12px;"></div>
-      </div>
-    </div>
   </main>
 
   <script type="module">
     import {
-      requireAuth, db, storage,
-      collection, query, where, getDocs, addDoc, onSnapshot,
-      serverTimestamp, sRef, uploadBytesResumable, getDownloadURL,
-      doc, updateDoc, getDoc, orderBy
+      requireAuth, db,
+      collection, query, where, getDocs, onSnapshot, updateDoc, doc
     } from "./firebase.js";
 
     let me = null;
-    let currentClass = null;
-
-    // --- Helper: create container for questions ---
-    function ensureMyQuestionsContainer() {
-      const container = document.getElementById("myQuestionsContainer");
-      container.style.display = "block";
-      container.className = "card";
-      return container;
-    }
-
-    // --- Helper: render student's questions & replies ---
-    function renderMyQuestions(container, docsArray) {
-      container.innerHTML = "<h3>💬 My Questions & Faculty Replies</h3>";
-      if (!docsArray.length) {
-        container.innerHTML += "<div class='muted'>No questions yet.</div>";
-        return;
-      }
-      docsArray.sort((a, b) => {
-        const ta = a.data.createdAt?.toDate?.()?.getTime?.() || 0;
-        const tb = b.data.createdAt?.toDate?.()?.getTime?.() || 0;
-        return tb - ta;
-      });
-
-      for (const docObj of docsArray) {
-        const q = docObj.data;
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-          <strong>${q.title || "(no title)"}</strong>
-          <div style="margin-top:6px;">${q.message || ""}</div>
-          ${q.fileURL ? `<div style="margin-top:6px;"><a href="${q.fileURL}" target="_blank">📎 View File</a></div>` : ""}
-          <div class="muted">Asked on: ${q.createdAt?.toDate?.()?.toLocaleString?.() || ""}</div>
-          ${q.reply ? `
-            <div class="reply-box">
-              <strong>Faculty Reply:</strong>
-              <div style="margin-top:6px;">${q.reply}</div>
-            </div>
-          ` : ""}
-        `;
-        container.appendChild(div);
-      }
-    }
 
     requireAuth(async (u) => {
       me = u;
@@ -144,13 +159,10 @@
       const cData = cDoc.data();
       const members = cData.members || [];
       if (!members.includes(me.uid)) {
-        try {
-          await updateDoc(doc(db, "classes", classId), { members: [...members, me.uid] });
-        } catch {}
+        await updateDoc(doc(db, "classes", classId), { members: [...members, me.uid] });
       }
       joinForm.reset();
       loadMyClasses();
-      openClass(classId);
     });
 
     function loadMyClasses() {
@@ -163,115 +175,16 @@
           const id = docSnap.id;
           const div = document.createElement("div");
           div.className = "list-item";
-          div.innerHTML = `<strong>${c.name}</strong><div class="muted">Code: <span style="color:#18ab91">${c.code}</span></div>
-          <div style="margin-top:8px;"><button class="btn secondary open-class" data-id="${id}">Open</button></div>`;
+          div.innerHTML = `<strong>${c.name}</strong>
+            <div class="muted">Code: <span style="color:#18ab91">${c.code}</span></div>
+            <div style="margin-top:8px;">
+              <button class="btn secondary" onclick="window.location='classes.html?id=${id}'">Open Class</button>
+            </div>`;
           myClasses.appendChild(div);
         });
-        document.querySelectorAll(".open-class").forEach(btn => {
-          btn.onclick = () => openClass(btn.dataset.id);
-        });
       });
     }
-
-    async function openClass(classId) {
-      currentClass = classId;
-      const snap = await getDoc(doc(db, "classes", classId));
-      const cData = snap.exists() ? snap.data() : {};
-      classArea.style.display = "block";
-      classTitle.textContent = cData.name || "Class";
-
-      const myQContainer = ensureMyQuestionsContainer();
-
-      // Real-time listener for student's questions + replies
-      const qRef = query(collection(db, "classes", classId, "questions"), where("studentUid", "==", me.uid), orderBy("createdAt", "desc"));
-      onSnapshot(qRef, qsnap => {
-        const arr = [];
-        qsnap.forEach(docSnap => arr.push({ id: docSnap.id, data: docSnap.data() }));
-        renderMyQuestions(myQContainer, arr);
-      });
-
-      // --- Notices ---
-      const qNotices = query(collection(db, "classes", classId, "notices"), orderBy("createdAt", "desc"));
-      onSnapshot(qNotices, ns => {
-        classNotices.innerHTML = "";
-        if (ns.empty) classNotices.innerHTML = "<div class='muted'>No notices yet.</div>";
-        ns.forEach(docSnap => {
-          const n = docSnap.data();
-          const div = document.createElement("div");
-          div.className = "list-item";
-          div.innerHTML = `<strong>${n.title}</strong><div>${n.message}</div>
-            ${n.fileURL ? `<div><a href="${n.fileURL}" target="_blank">📎 File</a></div>` : ""}
-            <div class="muted">Posted: ${n.createdAt?.toDate?.()?.toLocaleString?.() || ""}</div>`;
-          classNotices.appendChild(div);
-        });
-      });
-
-      // --- Assignments ---
-      const qAssign = query(collection(db, "classes", classId, "assignments"), orderBy("createdAt", "desc"));
-      onSnapshot(qAssign, snap => {
-        assignList.innerHTML = "";
-        if (snap.empty) assignList.innerHTML = "<div class='muted'>No assignments yet.</div>";
-        snap.forEach(docSnap => {
-          const a = docSnap.data();
-          const id = docSnap.id;
-          const div = document.createElement("div");
-          div.className = "list-item";
-          div.innerHTML = `<strong>${a.title}</strong><div>${a.description || ""}</div>
-            ${a.fileURL ? `<div><a href="${a.fileURL}" target="_blank">📎 File</a></div>` : ""}
-            <div class="muted">Posted: ${a.createdAt?.toDate?.()?.toLocaleString?.() || ""}</div>
-            <div style="margin-top:8px;"><button class="btn secondary submitFor" data-id="${id}">Submit / Ask</button></div>`;
-          assignList.appendChild(div);
-        });
-        document.querySelectorAll(".submitFor").forEach(btn => {
-          btn.onclick = () => submitFor.value = btn.dataset.id;
-        });
-      });
-    }
-
-    leaveClassBtn.onclick = async () => {
-      if (!currentClass) return;
-      if (!confirm("Leave this class?")) return;
-      const cRef = doc(db, "classes", currentClass);
-      const cSnap = await getDoc(cRef);
-      if (!cSnap.exists()) return;
-      const c = cSnap.data();
-      const members = (c.members || []).filter(x => x !== me.uid);
-      await updateDoc(cRef, { members });
-      classArea.style.display = "none";
-      currentClass = null;
-      loadMyClasses();
-    };
-
-    // --- Submitting (assignments or question) ---
-    submitForm.addEventListener("submit", async e => {
-      e.preventDefault();
-      if (!currentClass) return alert("Open a class first.");
-      const type = submitType.value;
-      const forId = submitFor.value || null;
-      const title = submitTitle.value.trim();
-      const msg = submitMsg.value.trim();
-      const file = submitFile.files[0];
-      let fileURL = "", fileName = "";
-      if (file) {
-        const path = `submissions/${currentClass}/${me.uid}_${Date.now()}_${file.name}`;
-        const ref = sRef(storage, path);
-        const uploadTask = await uploadBytesResumable(ref, file);
-        fileURL = await getDownloadURL(uploadTask.ref);
-        fileName = file.name;
-      }
-
-      if (type === "question") {
-        await addDoc(collection(db, "classes", currentClass, "questions"), {
-          title, message: msg, fileURL, fileName,
-          studentUid: me.uid, studentEmail: me.email,
-          createdAt: serverTimestamp()
-        });
-      } else {
-        alert("Assignment submission logic unchanged.");
-      }
-      submitForm.reset();
-      alert("Sent!");
-    });
   </script>
 </body>
-</html> classroom
+
+</html>
